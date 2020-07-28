@@ -1,0 +1,69 @@
+#!/bin/bash
+
+volume_command="amixer -q sset Master"
+command_var=""
+notification_string=""
+verbose=0
+show_notification_time=1
+
+usage()
+{
+  echo "usage: audio_control"
+  echo "options:"
+  echo "-i: increase audio volume"
+  echo "-d: decrease audio volume"
+  echo "-v: verbose"
+  echo "-m: mute audio"
+  echo "-t: time which notification will be displayed"
+  echo "-h: help"
+  exit 0
+}
+
+create_notification()
+{
+  is_on=$(amixer sget Master | grep 'Right:' | awk -F'[][]' '{ print $4 }')
+  if [ "$is_on" == "on" ];then
+    audio_volume=$(amixer sget Master | grep 'Right:' | awk -F'[][]' '{ print $2 }' | sed 's|[%]||g')
+    xsetroot -name "audio $audio_volume%: $(tprogbar -v $audio_volume)"
+  else
+    echo "off"
+  fi
+}
+
+[[ -z "$@" ]] && usage
+
+while getopts "i:d:t:mvh" args; do
+  case "${args}" in
+    i|increase)
+      command_var="$volume_command unmute ${OPTARG}%+"
+      ;;
+    d|decrease)
+      command_var="$volume_command unmute ${OPTARG}%-"
+      ;;
+    m|mute)
+      command_var="$volume_command toggle"
+      ;;
+    v|verbose)
+      verbose=1
+      ;;
+    t|time)
+      show_notification_time=${OPTARG}
+      ;;
+    h|help)
+      usage
+      ;;
+    * )
+      usage
+      ;;
+  esac
+done
+
+killall slstatus
+
+eval "${command_var[@]}"
+
+[ $verbose -eq 1 ] && create_notification
+
+sleep $show_notification_time
+
+slstatus &
