@@ -1,0 +1,93 @@
+#!/bin/bash
+####################################### | GLOBAL VARIABLES | #######################################
+sysfs_screen="sysfs/backlight/intel_backlight"
+sysfs_keyboard="sysfs/leds/smc::kbd_backlight"
+
+keyboard_max_value=255
+screen_max_value=1388
+
+light_increase="light -Ars"
+light_decrease="light -Urs"
+
+####################################### | RUNTIME VARIABLES | ######################################
+
+light_command=""
+peripheral_sysfs=""
+peripheral_name=""
+verbose=0
+show_notification_time=1
+value=0
+
+########################################### | FUNCTIONS | ##########################################
+
+usage()
+{
+  echo "usage: brightness"
+  exit 0
+}
+
+create_notification()
+{
+  value=$(light -Grs $peripheral_sysfs)
+  if [ "$peripheral_name" == "keyboard" ];then
+    greatest_value=$keyboard_max_value
+    step=25
+  else
+    greatest_value=$screen_max_value
+    step=139
+  fi
+  xsetroot -name "$peripheral_name $value: $(tprogbar -v $value -g $greatest_value -s $step)"
+}
+
+######################################## | PARSE ARGUMENTS | #######################################
+
+[[ -z "$@" ]] && usage
+
+while getopts "i:d:t:p:vhks" args; do
+  case "${args}" in
+    i|increase)
+      light_command=$light_increase
+      value=${OPTARG}
+      ;;
+    d|decrease)
+      light_command=$light_decrease
+      value=${OPTARG}
+      ;;
+    k|keyboard)
+      peripheral_sysfs=$sysfs_keyboard
+      peripheral_name="keyboard"
+      ;;
+    s|screen)
+      peripheral_sysfs=$sysfs_screen
+      peripheral_name="screen"
+      ;;
+    v|verbose)
+      verbose=1
+      ;;
+    t|time)
+      show_notification_time=${OPTARG}
+      ;;
+    h|help)
+      usage
+      ;;
+    * )
+      usage
+      ;;
+  esac
+done
+
+[[ -z $peripheral_sysfs ]] || [[ -z $light_command ]] && usage
+
+######################################## | EXECUTE COMMAND | #######################################
+
+killall slstatus
+
+command="$light_command $peripheral_sysfs $value"
+
+eval "${command[@]}"
+
+[ $verbose -eq 1 ] && create_notification
+
+sleep $show_notification_time
+
+slstatus &
