@@ -1,10 +1,17 @@
 #!/bin/bash
 
+####################################### | GLOBAL VARIABLES | #######################################
+
 volume_command="amixer -q sset Master"
+
+####################################### | RUNTIME VARIABLES | ######################################
+
 command_var=""
 notification_string=""
 verbose=0
 show_notification_time=1
+
+########################################### | FUNCTIONS | ##########################################
 
 usage()
 {
@@ -26,9 +33,19 @@ create_notification()
     audio_volume=$(amixer sget Master | grep 'Right:' | awk -F'[][]' '{ print $2 }' | sed 's|[%]||g')
     xsetroot -name "audio $audio_volume%: $(tprogbar -v $audio_volume)"
   else
-    echo "off"
+    xsetroot -name "audio muted: $(tprogbar -v 0)"
   fi
 }
+
+display_notification()
+{
+  killall slstatus
+  create_notification
+  sleep $show_notification_time
+  slstatus &
+}
+
+######################################## | PARSE ARGUMENTS | #######################################
 
 [[ -z "$@" ]] && usage
 
@@ -58,12 +75,9 @@ while getopts "i:d:t:mvh" args; do
   esac
 done
 
-killall slstatus
+######################################## | EXECUTE COMMAND | #######################################
 
 eval "${command_var[@]}"
 
-[ $verbose -eq 1 ] && create_notification
+[ $verbose -eq 1 ] && display_notification
 
-sleep $show_notification_time
-
-slstatus &
