@@ -22,7 +22,14 @@ value=0
 
 usage()
 {
-  echo "usage: brightness"
+  echo "usage: brightness_control"
+  echo "options:"
+  echo "-i: increase brightness"
+  echo "-d: decrease brightness"
+  echo "-k: set keyboard as peripheral"
+  echo "-s: set screen as peripheral"
+  echo "-v: verbose"
+  echo "-h: help"
   exit 0
 }
 
