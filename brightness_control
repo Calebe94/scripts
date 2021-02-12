@@ -43,7 +43,7 @@ create_notification()
     greatest_value=$screen_max_value
     step=139
   fi
-  xsetroot -name "$peripheral_name $value: $(tprogbar -v $value -g $greatest_value -s $step)"
+  xsetroot -name "$peripheral_name $value: $(tprogbar -v $value -p '|' -g $greatest_value -s $step)"
 }
 
 display_notification()

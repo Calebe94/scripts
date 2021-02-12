@@ -31,7 +31,7 @@ create_notification()
   is_on=$(amixer sget Master | grep 'Right:' | awk -F'[][]' '{ print $4 }')
   if [ "$is_on" == "on" ];then
     audio_volume=$(amixer sget Master | grep 'Right:' | awk -F'[][]' '{ print $2 }' | sed 's|[%]||g')
-    xsetroot -name "audio $audio_volume%: $(tprogbar -v $audio_volume)"
+    xsetroot -name "audio $audio_volume%: $(tprogbar -v $audio_volume -p '|')"
   else
     xsetroot -name "audio muted: $(tprogbar -v 0)"
   fi

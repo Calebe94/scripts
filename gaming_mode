@@ -1,0 +1,23 @@
+#!/bin/bash
+
+gaming_mode()
+{
+  killall dwm &
+  killall redshift &
+  xinput set-prop 13 340 0 &
+  nohup dwm_gaming &
+}
+
+normal_mode()
+{
+  killall dwm_gaming &
+  nohup dwm & 
+  nohup redshift &
+  xinput set-prop 13 340 1
+}
+
+if [ "$1" == "true" ]; then
+  gaming_mode
+elif [ "$1" == "false" ]; then
+  normal_mode
+fi
