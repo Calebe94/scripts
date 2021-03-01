@@ -31,6 +31,11 @@ dmenu_run_history: ${BIN_FOLDER}
 	install -m 555 dmenu_run_history ${BIN_FOLDER}
 	@echo "done!"
 
+calc: ${BIN_FOLDER}
+	@echo "Installing calc(=) script..."
+	install -m 555 = ${BIN_FOLDER}
+	@echo "done"
+
 uninstall:
 	@echo "Removing scripts..."
 	rm -f ${BIN_FOLDER}/audio_control
@@ -38,9 +43,10 @@ uninstall:
 	rm -f ${BIN_FOLDER}/passmenu
 	rm -f ${BIN_FOLDER}/dmenu_run_history
 	rm -f ${BIN_FOLDER}/gaming_mode
+	rm -f ${BIN_FOLDER}/=
 	@echo "done!"
 
-install: audio_control brightness_control gaming_mode passmenu dmenu_run_history
+install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc
 	@echo "scripts installed successfully!"
 
 .PHONY: install audio_control brightness_control gaming_mode
