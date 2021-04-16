@@ -1,0 +1,47 @@
+#!/bin/bash
+
+string="%s %s"
+net_interface="wlo1"
+battery="BAT0"
+
+wifi_status()
+{
+  cat /sys/class/net/$net_interface/operstate
+}
+
+wifi_link_perc()
+{
+  link=$(cat /proc/net/wireless | tail -1 | awk '{print $3}')
+  link="${link//./}"
+  echo $link
+  echo $(($link/70*100))
+}
+
+wifi_essid()
+{
+  nmcli -t -f active,ssid dev wifi | awk -F ':' '/yes:/{print $2}'
+}
+
+battery_status()
+{
+  cat /sys/class/power_supply/$battery/status
+}
+
+battery_perc()
+{
+  cat /sys/class/power_supply/$battery/capacity
+}
+
+datetime()
+{
+  date +"(%a) %d-%m-%y %H:%M"
+}
+
+main()
+{
+  xsetroot -name 
+}
+
+echo "WiFi: $(wifi_link_perc) %"
+wifi_status
+datetime
