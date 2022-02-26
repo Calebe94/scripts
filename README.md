@@ -1,2 +1,2 @@
 # scripts
-A compilations of scripts that I use dayli
+A compilations of scripts that I use daily
