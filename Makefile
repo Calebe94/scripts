@@ -34,7 +34,12 @@ dmenu_run_history: ${BIN_FOLDER}
 calc: ${BIN_FOLDER}
 	@echo "Installing calc(=) script..."
 	install -m 555 = ${BIN_FOLDER}
-	@echo "done"
+	@echo "done!"
+
+dws: ${BIN_FOLDER}
+	@echo "Installing dws(dmenu window switcher) script..."
+	install -m 555 dws ${BIN_FOLDER}
+	@echo "done!"
 
 uninstall:
 	@echo "Removing scripts..."
@@ -44,9 +49,10 @@ uninstall:
 	rm -f ${BIN_FOLDER}/dmenu_run_history
 	rm -f ${BIN_FOLDER}/gaming_mode
 	rm -f ${BIN_FOLDER}/=
+	rm -f ${BIN_FOLDER}/dws
 	@echo "done!"
 
-install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc
+install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc dws
 	@echo "scripts installed successfully!"
 
-.PHONY: install audio_control brightness_control gaming_mode
+.PHONY: install audio_control brightness_control gaming_mode dws
