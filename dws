@@ -16,9 +16,37 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-[ -z $(which wmctrl) ] && echo '"wmctrl" not found.' && exit 1
+[ -z $(which bc ) ] && echo '"bc" not found.' && exit 1
+[ -z $(which lsw ) ] && echo '"lsw" not found.' && exit 1
+[ -z $(which xdotool ) ] && echo '"xdotool" not found.' && exit 1
+
+get_matched_path()
+{
+    # for some reason awk was not working on some strings.
+    # I'm using `grep` until I find the solution.
+    #awk '/'"$1"'/{print $0}'
+    grep "$1" | awk '{print $1}'
+}
+
+find_pid()
+{
+    lsw | get_matched_path "$1"
+}
+
+hex_to_dec()
+{
+    hex=$(sed -e 'y/xabcdef/XABCDEF/' -e 's/^0X//')
+    printf "ibase=16; %s\n" "$hex" | bc
+}
+
+activate_window()
+{
+    window_id=$(cat /dev/stdin)
+    xdotool windowactivate "$window_id"
+}
 
 arguments="$@"
 
-wmctrl -l | awk '{$1=$2=$3=""; print }' | cut -c 4- | dmenu $@ | \
-{ read client; [ -n "$client" ] && wmctrl -a "$client" && exit 0 || echo "No client selected!"; exit 1; }
+lsw | awk '{$1=""; print }' | cut -c 2- | dmenu $@ | \
+{ read client; [ -n "$client" ] && find_pid "$client" | hex_to_dec | activate_window  && exit 0 || echo "No client selected!"; exit 1; }
+
