@@ -59,7 +59,7 @@ while getopts "i:d:t:mvh" args; do
       ;;
     m|mute)
       command_var="$volume_command toggle"
-      playerctl -a play-pause
+      playerctl -a play-pause &> /dev/null &
       ;;
     v|verbose)
       verbose=1
