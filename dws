@@ -42,7 +42,7 @@ hex_to_dec()
 activate_window()
 {
     client_name="$1"
-    client_pid_scratchpad=$(awk "/$client_name/"'{print $1}' /tmp/dwm_scratchpad 2> /dev/null)
+    client_pid_scratchpad=$(grep "$client_name" /tmp/dwm_scratchpad 2> /dev/null | awk '{print $1}')
 
     # Check if client is in scratchpad
     # If it is, send a signal to dwm (depends on dwmc patch)
@@ -52,8 +52,7 @@ activate_window()
         client_pid=$(echo "$client_pid_hex" | hex_to_dec)
         xdotool windowactivate "$client_pid"
     else
-        echo "$client_pid_scratchpad"
-        xsetroot -name "fsignal:scratchpad_show ui $client_pid_scratchpad"
+        xsetroot -name "fsignal:scratchpad_show v $client_name"
     fi
 }
 
