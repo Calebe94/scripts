@@ -41,12 +41,23 @@ hex_to_dec()
 
 activate_window()
 {
-    window_id=$(cat /dev/stdin)
-    xdotool windowactivate "$window_id"
+    client_name="$1"
+    client_pid_scratchpad=$(awk "/$client_name/"'{print $1}' /tmp/dwm_scratchpad 2> /dev/null)
+
+    # Check if client is in scratchpad
+    # If it is, send a signal to dwm (depends on dwmc patch)
+    # If it is not use xdotool
+    if [ -z "$client_pid_scratchpad" ]; then
+        client_pid_hex=$(find_pid "$client_name")
+        client_pid=$(echo "$client_pid_hex" | hex_to_dec)
+        xdotool windowactivate "$client_pid"
+    else
+        echo "$client_pid_scratchpad"
+        xsetroot -name "fsignal:scratchpad_show ui $client_pid_scratchpad"
+    fi
 }
 
 arguments="$@"
 
 lsw | awk '{$1=""; print }' | cut -c 2- | dmenu $@ | \
-{ read client; [ -n "$client" ] && find_pid "$client" | hex_to_dec | activate_window  && exit 0 || echo "No client selected!"; exit 1; }
-
+{ read client; [ -n "$client" ] && activate_window "$client" && exit 0 || echo "No client selected!"; exit 1; }
