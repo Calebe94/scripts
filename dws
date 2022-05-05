@@ -16,47 +16,29 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-[ -z $(which bc ) ] && echo '"bc" not found.' && exit 1
-[ -z $(which lsw ) ] && echo '"lsw" not found.' && exit 1
-[ -z $(which xdotool ) ] && echo '"xdotool" not found.' && exit 1
-
-get_matched_path()
-{
-    # for some reason awk was not working on some strings.
-    # I'm using `grep` until I find the solution.
-    #awk '/'"$1"'/{print $0}'
-    grep "$1" | awk '{print $1}'
-}
-
-find_pid()
-{
-    lsw | get_matched_path "$1"
-}
-
-hex_to_dec()
-{
-    hex=$(sed -e 'y/xabcdef/XABCDEF/' -e 's/^0X//')
-    printf "ibase=16; %s\n" "$hex" | bc
-}
+[ -z "$(which wmctrl)" ] && echo '"wmctrl" not found.' && exit 1
 
 activate_window()
 {
-    client_name="$1"
-    client_pid_scratchpad=$(grep "$client_name" /tmp/dwm_scratchpad 2> /dev/null | awk '{print $1}')
+    client="$1"
+    client_name="$(echo "$client" | awk '$1=""; {print}' | cut -c 2-)"
+    client_pid="$(echo "$client" | awk '{print $1}')"
+    client_pid_scratchpad=$(grep "$client_pid" /tmp/dwm_scratchpad 2> /dev/null | awk '{print $1}')
 
     # Check if client is in scratchpad
     # If it is, send a signal to dwm (depends on dwmc patch)
-    # If it is not use xdotool
+    # If it is not use wmctrl
     if [ -z "$client_pid_scratchpad" ]; then
-        client_pid_hex=$(find_pid "$client_name")
-        client_pid=$(echo "$client_pid_hex" | hex_to_dec)
-        xdotool windowactivate "$client_pid"
+        wmctrl -a "$client_name"
     else
         xsetroot -name "fsignal:scratchpad_show v $client_name"
     fi
 }
 
-arguments="$@"
+list_windows()
+{
+    wmctrl -l | awk '$3=$2=""; {print}'
+}
 
-lsw | awk '{$1=""; print }' | cut -c 2- | dmenu $@ | \
-{ read client; [ -n "$client" ] && activate_window "$client" && exit 0 || echo "No client selected!"; exit 1; }
+list_windows | dmenu $* | \
+{ read -r client; [ -n "$client" ] && activate_window "$client" && exit 0 || echo "No client selected!"; exit 1; }
