@@ -52,7 +52,13 @@ uninstall:
 	rm -f ${BIN_FOLDER}/dws
 	@echo "done!"
 
-install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc dws
+audio-supression:
+	@echo "Enabling background noise supression..."
+	echo 0 > /sys/module/snd_hda_intel/parameters/power_save
+	./fix-microphone-background-noise.sh && pulseaudio -k
+	@echo "done!"
+
+install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc audio-supression
 	@echo "scripts installed successfully!"
 
-.PHONY: install audio_control brightness_control gaming_mode dws
+.PHONY: install audio_control brightness_control gaming_mode audio-supression
