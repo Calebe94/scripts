@@ -31,7 +31,7 @@ activate_window()
     if [ -z "$client_pid_scratchpad" ]; then
         wmctrl -a "$client_name"
     else
-        xsetroot -name "fsignal:scratchpad_show v $client_name"
+        xsetroot -name "fsignal:scratchpad_show v $client_pid"
     fi
 }
 
