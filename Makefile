@@ -58,7 +58,7 @@ audio-supression:
 	./fix-microphone-background-noise.sh && pulseaudio -k
 	@echo "done!"
 
-install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc audio-supression
+install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc
 	@echo "scripts installed successfully!"
 
 .PHONY: install audio_control brightness_control gaming_mode audio-supression
