@@ -59,7 +59,6 @@ while getopts "i:d:t:mvh" args; do
       ;;
     m|mute)
       command_var="$volume_command toggle"
-      playerctl -a play-pause &> /dev/null &
       ;;
     v|verbose)
       verbose=1
@@ -82,7 +81,6 @@ done
 [ -z $(which amixer) ] && echo '"amixer" not found.' && exit 1
 [ -z $(which xsetroot) ] && echo '"xsetroot" not found.' && exit 1
 [ -z $(which tprogbar) ] && echo '"tprogbar" not found.' && exit 1
-[ -z $(which playerctl) ] && echo '"playerctl" not found.' && exit 1
 [ -z $(which killall) ] && echo '"killall" not found.' && exit 1
 [ -z $(which slstatus) ] && echo '"slstatus" not found.' && exit 1
 
