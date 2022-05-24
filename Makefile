@@ -58,7 +58,12 @@ audio-supression:
 	./fix-microphone-background-noise.sh && pulseaudio -k
 	@echo "done!"
 
-install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc
+launch_conky:
+	@echo "Installing launch conky script ..."
+	install -m 555 launch_conky ${BIN_FOLDER}
+	@echo "done!"
+
+install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc launch_conky
 	@echo "scripts installed successfully!"
 
-.PHONY: install audio_control brightness_control gaming_mode audio-supression
+.PHONY: install audio_control brightness_control gaming_mode audio-supression launch_conky

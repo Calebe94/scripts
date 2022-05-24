@@ -1,0 +1,9 @@
+#!/bin/sh
+
+conky -c ~/.config/conky/cpu &
+conky -c ~/.config/conky/memory &
+conky -c ~/.config/conky/weather &
+conky -c ~/.config/conky/file_systems &
+conky -c ~/.config/conky/todo &
+conky -c ~/.config/conky/playing &
+conky -c ~/.config/conky/pomodoro &
