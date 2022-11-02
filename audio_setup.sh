@@ -1,4 +1,5 @@
 #!/bin/sh
+# Reference: https://askubuntu.com/questions/41858/shortcut-to-switch-between-analog-stereo-output-hdmi-audio-output
 
 CURRENT_PROFILE=$(pacmd list-cards | grep "active profile" | cut -d ' ' -f 3-)
 
