@@ -38,6 +38,7 @@ activate_window()
 list_windows()
 {
     wmctrl -l | awk '$3=$2=""; {print}'
+    [ -n "$TMENU_FILE" ] && tmenu
 }
 
 list_windows | dmenu $* | \
