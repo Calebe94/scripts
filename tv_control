@@ -1,0 +1,61 @@
+#!/bin/sh
+
+[ -z "$(which bc)" ] && echo '"bc" not found.' && exit 1
+[ -z "$(which mosquitto_pub)" ] && echo '"mosquitto_pub" not found.' && exit 1
+[ -z "$TV_PATH" ] && TV_PATH="$HOME/.cache/tv_control/"
+[ ! -d "$TV_PATH" ] && mkdir -p "$TV_PATH"
+[ ! -f "$TV_PATH/audio" ] && touch "$TV_PATH/audio"
+[ ! -f "$TV_PATH/hdmi" ] && touch "$TV_PATH/hdmi"
+
+# [ -z "$TV_MODULE_IP" ] && TV_MODULE_IP="192.168.1.2"
+
+usage()
+{
+    echo "tv_control:"
+}
+
+# [ -z "$@" ] && usage
+
+while getopts "v:s:h" args; do
+    case "${args}" in
+        v)
+            volume="${OPTARG}"
+            echo "volume: $volume"
+            if [ $volume -gt -1 ] && [ $volume -lt 101 ]; then
+                actual_volume="$(cat $TV_PATH/audio)"
+                volume_diff=$(echo "$actual_volume-$volume"|bc)
+
+                if [ $volume_diff -lt $volume ]; then
+                    volume_diff="$(echo $volume_diff | sed 's/-//g')"
+                    for index in $(seq $volume_diff); do
+                        mosquitto_pub -m 'vol+' -t "ir/"
+                        echo "$volume" > "$TV_PATH/audio"
+                        sleep 0.1
+                    done
+                else
+                    volume_diff="$(echo $volume_diff | sed 's/-//g')"
+                    for index in $(seq $volume_diff); do
+                        mosquitto_pub -m 'vol-' -t "ir/"
+                        echo "$volume" > "$TV_PATH/audio"
+                        sleep 0.1
+                    done
+                fi
+            fi
+            ;;
+        s)
+            source="${OPTARG}"
+            if [ "$source" = "hdmi-1" ] || [ "$source" = "hdmi-2" ]; then
+                mosquitto_pub -m "$source" -t "ir/"
+            else
+                echo "source not valid."
+                exit 1
+            fi
+            ;;
+        h)
+            usage
+            ;;
+        * )
+            usage
+            ;;
+    esac
+done

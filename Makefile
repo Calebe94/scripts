@@ -63,7 +63,12 @@ launch_conky:
 	install -m 555 launch_conky ${BIN_FOLDER}
 	@echo "done!"
 
+tv_control:
+	@echo "Installing tv control script ..."
+	install -m 555 tv_control ${BIN_FOLDER}
+	install -m 555 dmenu_tv_control ${BIN_FOLDER}
+
 install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc launch_conky
 	@echo "scripts installed successfully!"
 
-.PHONY: install audio_control brightness_control gaming_mode audio-supression launch_conky
+.PHONY: install audio_control brightness_control gaming_mode audio-supression launch_conky tv_control
