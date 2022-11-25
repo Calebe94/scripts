@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export TBM_FILE=~/.radio
+
+tbm -lt | dmenu -p "Radio" -l 10 -c | { while read -r station; do test -z "$station" && exit 1; st -e mpv "$(tbm -l | grep "$station" | awk '{print $1}')";  done }

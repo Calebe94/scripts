@@ -67,8 +67,14 @@ tv_control:
 	@echo "Installing tv control script ..."
 	install -m 555 tv_control ${BIN_FOLDER}
 	install -m 555 dmenu_tv_control ${BIN_FOLDER}
+	@echo "done!"
 
-install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc launch_conky
+radio:
+	@echo "Installing radio script ..."
+	install -m 555 radio ${BIN_FOLDER}
+	@echo "done!"
+
+install: audio_control brightness_control gaming_mode passmenu dmenu_run_history calc launch_conky radio
 	@echo "scripts installed successfully!"
 
-.PHONY: install audio_control brightness_control gaming_mode audio-supression launch_conky tv_control
+.PHONY: install audio_control brightness_control gaming_mode audio-supression launch_conky tv_control radio
